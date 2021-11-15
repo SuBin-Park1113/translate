@@ -14,7 +14,7 @@ from sklearn import metrics<br>
 ```
 <br>
 데이터 과학은 소프트웨어 공학이 아닙니다 [[08:43]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=523s). 여러분은 `PEP 8`을 따르지 않는 코드 및 `import *` 와 같은 것들 것 보게 될 것입니다. 하지만 그것은 잠깐일 뿐입니다. 우리가 지금 하고 있는 것은 모델을 프로토타이핑 하는 것이며 프로토타이핑 모델에는 어디에서도 본 적없는 남다른 모범 사례들이 있습니다. 핵심은 매우 상호적이고 반복적인 무언가를 할 수 있다는 것입니다. 주피터 노트북은 이를 쉽게 만들어줍니다. 만약 `display`가 무엇인지 궁금하다면 다음 세가지 중 하나를 하십시오.
-<br>
+
 1. 셀에 `display`를 입력하고 shift+enter 키를 누르십시오. – `<function IPython.core.display.display>`의 출처를 알 수 있습니다. <br>
 2. 셀에 `?display`를 입력하고 shift+enter 키를 누르십시오. – 문서가 표시됩니다. <br>
 3. 셀에 `??display`를 입력하고 shift+enter 키를 누르십시오. – 소스코드가 표시됩니다. 특히 대부분의 함수가 읽기 쉽고 5줄을 넘지 않기 때문에 fastai 라이브러리에 유용합니다.<br>
