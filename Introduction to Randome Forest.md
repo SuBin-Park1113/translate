@@ -37,7 +37,8 @@ Kaggle 대회에 참가하면 어떤 종류의 모델, 어떤 종류의 데이�
 ``` 
 df_raw = pd.read_csv(f'{PATH}Train.csv', low_memory=False, 
                      parse_dates=["saledate"])
-``` <br>
+``` 
+<br>
 * `parse_dates`는 해당 날짜를 포함하는 컬럼의 목록을 뜻합니다.
 * `low_memory=False`는 타입을 결정하기 위해 파일을 더 읽어오도록 합니다.
 
@@ -47,4 +48,5 @@ def display_all(df):
         with pd.option_context("display.max_columns", 1000): 
             display(df)
 display_all(df_raw.tail().transpose())
-```<br>
+```
+<br>
