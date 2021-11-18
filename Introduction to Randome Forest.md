@@ -1,19 +1,22 @@
 # 랜덤포레스트
 ***
-## 랜덤포레스트 : 중고 불도저 가격표
+## 랜덤포레스트 : [중고 불도저 가격표](https://www.kaggle.com/c/bluebook-for-bulldozers)
 ``` 
-%load_ext autoreload<br>
-%autoreload 2<br>
-%matplotlib inline<br>
-from fastai.imports import *<br>
-from fastai.structured import *<br>
-from pandas_summary import DataFrameSummary<br>
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier<br>
-from IPython.display import display<br>
+%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+
+from fastai.imports import *
+from fastai.structured import *
+
+from pandas_summary import DataFrameSummary
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from IPython.display import display
+
 from sklearn import metrics<br>
 ```
 <br>
-데이터 과학은 소프트웨어 공학이 아닙니다[[08:43]](https://www.youtube.com/watch v=CzdWqFTmn0Y&t=523s). 여러분은 `PEP 8`을 따르지 않는 코드 및 `import *` 와 같은 것들 것 보게 될 것입니다. 하지만 그것은 잠깐일 뿐입니다. 우리가 지금 하고 있는 것은 모델을 프로토타이핑 하는 것이며 프로토타이핑 모델에는 어디에서도 본 적없는 남다른 모범 사례들이 있습니다. 핵심은 깊이 상호작용을 하고 반복적으로 하는 겁니다. 주피터 노트북은 이를 쉽게 만들어줍니다. 만약 `display`가 무엇인지 궁금하다면 다음 세가지 중 하나를 하십시오.<br><br>
+데이터 과학은 소프트웨어 공학이 아닙니다. 여러분은 `PEP 8`을 따르지 않는 코드 및 `import *` 와 같은 것들 것 보게 될 것입니다. 하지만 그것은 잠깐일 뿐입니다. 우리가 지금 하고 있는 것은 모델을 프로토타이핑 하는 것이며 프로토타이핑 모델에는 어디에서도 본 적없는 남다른 모범 사례들이 있습니다. 핵심은 깊이 상호작용을 하고 반복적으로 하는 겁니다. 주피터 노트북은 이를 쉽게 만들어줍니다. 만약 `display`가 무엇인지 궁금하다면 다음 세가지 중 하나를 하십시오.<br><br>
 
 1. 셀에 `display`를 입력하고 shift+enter 키를 누르십시오. – `<function IPython.core.display.display>`의 출처를 알 수 있습니다. <br>
 2. 셀에 `?display`를 입력하고 shift+enter 키를 누르십시오. – 문서가 표시됩니다. <br>
@@ -27,12 +30,23 @@ Kaggle 대회에 참가하면 어떤 종류의 모델, 어떤 종류의 데이�
 
 여기 데이터를 다운로드하는 몇가지 방법이 있습니다.<br>
 1. 컴퓨터에 다운로드하고 AWS로 `scp`하세요.
-2. [[17:32]](https://www.youtube.com/watch?t=17m32s&v=CzdWqFTmn0Y&feature=youtu.be) Firefox에서 `ctrl + shift + I` 키를 눌러 웹 개발자 도구를 실행시킵니다. `Network` 탭으로 이동하여 `Download` 버튼을 클릭하고 대화상자를 빠져나갑니다. 그러면 네트워크 연결이 표시됩니다. 그 후 마우스 오른쪽을 클릭하고 `Copy as cURL`을 선택합니다. 명령을 붙여넣고 끝에 `-o bulldozer.zip`을 추가합니다.<br><br>
+2. [[17:32]](https://www.youtube.com/watch?t=17m32s&v=CzdWqFTmn0Y&feature=youtu.be) Firefox에서 `ctrl + shift + I` 키를 눌러 웹 개발자 도구를 실행시킵니다. `Network` 탭으로 이동하여 `Download` 버튼을 클릭하고 대화상자를 빠져나갑니다. 그러면 네트워크 연결이 표시됩니다. 그 후 마우스 오른쪽을 클릭하고 `Copy as cURL`을 선택합니다. 명령을 붙여넣고 끝에 `-o bulldozer.zip`을 추가합니다.
+
+![1_vDm7uqS3KMjnb8aTEPMm5w](https://user-images.githubusercontent.com/80996046/142400899-080f15df-117a-4a65-b6a1-3bc455d7558d.png)
+
+주피터 트릭[[21:39]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1299s) — 웹 기반 터미널을 다음과 같이 열 수도 있습니다 :
+
+![1__bhK1mz0ROnMZrwxe4huDQ](https://user-images.githubusercontent.com/80996046/142401184-2a284b28-beaf-4aad-82d3-0caaab3c2b22.png)
+
+이 대회의 목표는 2011년 말까지의 데이터가 담긴 훈련 데이터 셋을 이용하여 불도저 판매 가격을 예측하는 것입니다.
+
 
 #### 데이터 알아보기
 
 * **구조적 데이터(Structured data):** 식별자, 날짜, 크기 등 다양한 유형의 항목을 나타내는 컬럼입니다.
-* **비구조적 데이터(Unstructured data):** `pandas`는 `pd'로 import된 구조적 데이터로 작업할 때 가장 중요한 라이브러리입니다. <br><br>
+* **비구조적 데이터(Unstructured data):** 이미지
+
+`pandas`는 `pd'로 import된 구조적 데이터로 작업할 때 가장 중요한 라이브러리입니다. <br><br>
 
 ``` 
 df_raw = pd.read_csv(f'{PATH}Train.csv', low_memory=False, 
@@ -48,8 +62,40 @@ def display_all(df):
     with pd.option_context("display.max_rows", 1000): 
         with pd.option_context("display.max_columns", 1000): 
             display(df)
+
 display_all(df_raw.tail().transpose())
 ```
+
+주피터 노트북에서 변수 이름을 입력하고 `ctrl+enter` 키를 누르면 데이터 프레임, 비디오, HTML등 그것이 무언이든지 간에 그것을 보여줄 방법을 찾아낼 것 입니다[[32:13]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1933s). 
+
+![1_ZzaVXSfj0SCERQUCnQljpw](https://user-images.githubusercontent.com/80996046/142400486-7ba7417c-92d8-4d59-8216-f5162ddebc50.png)
+
+우리가 예측하고자 하는 변수를 종속 변수라고 하며 이 경우 종속 변수는 `SalePrice`입니다.
+
+**질문** : 과적합(overfit) 위험이 있기 때문에 데이터를 절대로 봐서는 안됩니까?[[33:08]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1988s) 적어도 우리가 데이터를 잘 가져왔다는 것을 알고 싶지만, 너무 많은 추정을 하고 싶지 않기에 이 부분을 연구하지 않는 경향이 있습니다. 많은 책들이 먼저 탐색적 데이터 분석(EDA)을 하라고 합니다. 오늘은 탐색적 데이터 분석 중심의 머신 러닝을 배우겠습니다.
+
+
+***
+## 프로젝트의 목적 — 평가[[34:06]](https://www.youtube.com/watch?t=34m6s&v=CzdWqFTmn0Y&feature=youtu.be)
+
+평균 제곱 로그 오차. 로그를 사용하는 이유는 일반적으로 $10가 누락되는 것보다 10%가 누락되는 것에 더 신경쓰기 때문입니다. 그래서 만약 $1000,000 짜리 물건을 $100,000 만큼 할인하거나 $10,000 짜리 물건을 $1,000 만큼 할인한다면 우리는 같은 할인 규모(10%)의 문제를 고려해야 합니다.
+
+``` 
+df_raw.SalePrice = np.log(df_raw.SalePrice)
+``` 
+* `np` - numpy를 사용하면 배열, 행렬, 벡터, 고차원 텐서를 파이썬 변수처럼 처리할 수 있습니다.
+
+***
+## 랜덤포레스트란 무엇인가[[36:37]](https://www.youtube.com/watch?t=36m37s&v=CzdWqFTmn0Y&feature=youtu.be)
+
+랜덤포레스트는 가장 보편적인 머신 러닝 기법입니다.
+
+* 범주형 변수(분류)와 연속형 변수(회귀) 모두 예측할 수 있습니다. 
+* 픽셀, 우편번호, 수익 등 어떤 종류의 컬럼도 예측할 수 있습니다.
+* 과적합(overfit)이 심하지 않으며 오버피팅을 멈추는 것이 쉽습니다.
+* 별도의 검증 데이터가 필요하지 않습니다. 데이터셋이 하나만 있어도 일반화가 잘 됩니다.
+* 통계적 추정이 거의 없습니다. 데이터가 정규 분포를 따르거나 선형적 관계이라고 추정하지 않습니다.
+* 피처 엔지니어링이 많이 필요하지 않습니다. 데이터를 로그로 변환하거나 상호 작용할 필요가 없습니다.
 
 
 **질문**: 차원의 저주는 어떻습니까?[[38:16]](https://www.youtube.com/watch?t=38m16s&v=CzdWqFTmn0Y&feature=youtu.be) 여러분이 자주 듣는 두가지 개념 차원의 저주(curse of dimensionality)와 공짜 점심은 없다(No Free Lunch Theorem)가 있습니다.
