@@ -1,22 +1,19 @@
 # 랜덤포레스트
 ***
-## 랜덤포레스트 : [중고 불도저 가격표](https://www.kaggle.com/c/bluebook-for-bulldozers)
+## 랜덤포레스트 : 중고 불도저 가격표
 ``` 
-%load_ext autoreload
-%autoreload 2
-%matplotlib inline
-
-from fastai.imports import *
-from fastai.structured import *
-
-from pandas_summary import DataFrameSummary
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from IPython.display import display
-
+%load_ext autoreload<br>
+%autoreload 2<br>
+%matplotlib inline<br>
+from fastai.imports import *<br>
+from fastai.structured import *<br>
+from pandas_summary import DataFrameSummary<br>
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier<br>
+from IPython.display import display<br>
 from sklearn import metrics<br>
 ```
 <br>
-데이터 과학은 소프트웨어 공학이 아닙니다. 여러분은 `PEP 8`을 따르지 않는 코드 및 `import *` 와 같은 것들 것 보게 될 것입니다. 하지만 그것은 잠깐일 뿐입니다. 우리가 지금 하고 있는 것은 모델을 프로토타이핑 하는 것이며 프로토타이핑 모델에는 어디에서도 본 적없는 남다른 모범 사례들이 있습니다. 핵심은 깊이 상호작용을 하고 반복적으로 하는 겁니다. 주피터 노트북은 이를 쉽게 만들어줍니다. 만약 `display`가 무엇인지 궁금하다면 다음 세가지 중 하나를 하십시오.<br><br>
+데이터 과학은 소프트웨어 공학이 아닙니다[[08:43]](https://www.youtube.com/watch v=CzdWqFTmn0Y&t=523s). 여러분은 `PEP 8`을 따르지 않는 코드 및 `import *` 와 같은 것들 것 보게 될 것입니다. 하지만 그것은 잠깐일 뿐입니다. 우리가 지금 하고 있는 것은 모델을 프로토타이핑 하는 것이며 프로토타이핑 모델에는 어디에서도 본 적없는 남다른 모범 사례들이 있습니다. 핵심은 깊이 상호작용을 하고 반복적으로 하는 겁니다. 주피터 노트북은 이를 쉽게 만들어줍니다. 만약 `display`가 무엇인지 궁금하다면 다음 세가지 중 하나를 하십시오.<br><br>
 
 1. 셀에 `display`를 입력하고 shift+enter 키를 누르십시오. – `<function IPython.core.display.display>`의 출처를 알 수 있습니다. <br>
 2. 셀에 `?display`를 입력하고 shift+enter 키를 누르십시오. – 문서가 표시됩니다. <br>
@@ -30,23 +27,12 @@ Kaggle 대회에 참가하면 어떤 종류의 모델, 어떤 종류의 데이�
 
 여기 데이터를 다운로드하는 몇가지 방법이 있습니다.<br>
 1. 컴퓨터에 다운로드하고 AWS로 `scp`하세요.
-2. [[17:32]](https://www.youtube.com/watch?t=17m32s&v=CzdWqFTmn0Y&feature=youtu.be) Firefox에서 `ctrl + shift + I` 키를 눌러 웹 개발자 도구를 실행시킵니다. `Network` 탭으로 이동하여 `Download` 버튼을 클릭하고 대화상자를 빠져나갑니다. 그러면 네트워크 연결이 표시됩니다. 그 후 마우스 오른쪽을 클릭하고 `Copy as cURL`을 선택합니다. 명령을 붙여넣고 끝에 `-o bulldozer.zip`을 추가합니다.
-
-![1_vDm7uqS3KMjnb8aTEPMm5w](https://user-images.githubusercontent.com/80996046/142400899-080f15df-117a-4a65-b6a1-3bc455d7558d.png)
-
-주피터 트릭[[21:39]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1299s) — 웹 기반 터미널을 다음과 같이 열 수도 있습니다 :
-
-![1__bhK1mz0ROnMZrwxe4huDQ](https://user-images.githubusercontent.com/80996046/142401184-2a284b28-beaf-4aad-82d3-0caaab3c2b22.png)
-
-이 대회의 목표는 2011년 말까지의 데이터가 담긴 훈련 데이터 셋을 이용하여 불도저 판매 가격을 예측하는 것입니다.
-
+2. [[17:32]](https://www.youtube.com/watch?t=17m32s&v=CzdWqFTmn0Y&feature=youtu.be) Firefox에서 `ctrl + shift + I` 키를 눌러 웹 개발자 도구를 실행시킵니다. `Network` 탭으로 이동하여 `Download` 버튼을 클릭하고 대화상자를 빠져나갑니다. 그러면 네트워크 연결이 표시됩니다. 그 후 마우스 오른쪽을 클릭하고 `Copy as cURL`을 선택합니다. 명령을 붙여넣고 끝에 `-o bulldozer.zip`을 추가합니다.<br><br>
 
 #### 데이터 알아보기
 
 * **구조적 데이터(Structured data):** 식별자, 날짜, 크기 등 다양한 유형의 항목을 나타내는 컬럼입니다.
-* **비구조적 데이터(Unstructured data):** 이미지
-
-`pandas`는 `pd'로 import된 구조적 데이터로 작업할 때 가장 중요한 라이브러리입니다. <br><br>
+* **비구조적 데이터(Unstructured data):** `pandas`는 `pd'로 import된 구조적 데이터로 작업할 때 가장 중요한 라이브러리입니다. <br><br>
 
 ``` 
 df_raw = pd.read_csv(f'{PATH}Train.csv', low_memory=False, 
@@ -62,40 +48,8 @@ def display_all(df):
     with pd.option_context("display.max_rows", 1000): 
         with pd.option_context("display.max_columns", 1000): 
             display(df)
-
 display_all(df_raw.tail().transpose())
 ```
-
-주피터 노트북에서 변수 이름을 입력하고 `ctrl+enter` 키를 누르면 데이터 프레임, 비디오, HTML등 그것이 무언이든지 간에 그것을 보여줄 방법을 찾아낼 것 입니다[[32:13]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1933s). 
-
-![1_ZzaVXSfj0SCERQUCnQljpw](https://user-images.githubusercontent.com/80996046/142400486-7ba7417c-92d8-4d59-8216-f5162ddebc50.png)
-
-우리가 예측하고자 하는 변수를 종속 변수라고 하며 이 경우 종속 변수는 `SalePrice`입니다.
-
-**질문** : 과적합(overfit) 위험이 있기 때문에 데이터를 절대로 봐서는 안됩니까?[[33:08]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=1988s) 적어도 우리가 데이터를 잘 가져왔다는 것을 알고 싶지만, 너무 많은 추정을 하고 싶지 않기에 이 부분을 연구하지 않는 경향이 있습니다. 많은 책들이 먼저 탐색적 데이터 분석(EDA)을 하라고 합니다. 오늘은 탐색적 데이터 분석 중심의 머신 러닝을 배우겠습니다.
-
-
-***
-## 프로젝트의 목적 — 평가[[34:06]](https://www.youtube.com/watch?t=34m6s&v=CzdWqFTmn0Y&feature=youtu.be)
-
-평균 제곱 로그 오차. 로그를 사용하는 이유는 일반적으로 $10가 누락되는 것보다 10%가 누락되는 것에 더 신경쓰기 때문입니다. 그래서 만약 $1000,000 짜리 물건을 $100,000 만큼 할인하거나 $10,000 짜리 물건을 $1,000 만큼 할인한다면 우리는 같은 할인 규모(10%)의 문제를 고려해야 합니다.
-
-``` 
-df_raw.SalePrice = np.log(df_raw.SalePrice)
-``` 
-* `np` - numpy를 사용하면 배열, 행렬, 벡터, 고차원 텐서를 파이썬 변수처럼 처리할 수 있습니다.
-
-***
-## 랜덤포레스트란 무엇인가[[36:37]](https://www.youtube.com/watch?t=36m37s&v=CzdWqFTmn0Y&feature=youtu.be)
-
-랜덤포레스트는 가장 보편적인 머신 러닝 기법입니다.
-
-* 범주형 변수(분류)와 연속형 변수(회귀) 모두 예측할 수 있습니다. 
-* 픽셀, 우편번호, 수익 등 어떤 종류의 컬럼도 예측할 수 있습니다.
-* 과적합(overfit)이 심하지 않으며 오버피팅을 멈추는 것이 쉽습니다.
-* 별도의 검증 데이터가 필요하지 않습니다. 데이터셋이 하나만 있어도 일반화가 잘 됩니다.
-* 통계적 추정이 거의 없습니다. 데이터가 정규 분포를 따르거나 선형적 관계이라고 추정하지 않습니다.
-* 피처 엔지니어링이 많이 필요하지 않습니다. 데이터를 로그로 변환하거나 상호 작용할 필요가 없습니다.
 
 
 **질문**: 차원의 저주는 어떻습니까?[[38:16]](https://www.youtube.com/watch?t=38m16s&v=CzdWqFTmn0Y&feature=youtu.be) 여러분이 자주 듣는 두가지 개념 차원의 저주(curse of dimensionality)와 공짜 점심은 없다(No Free Lunch Theorem)가 있습니다.
@@ -117,7 +71,6 @@ df_raw.SalePrice = np.log(df_raw.SalePrice)
 여기에는 몇가지 관계가 있습니다, 사실 우리는 무작위 데이터셋을 사용하지 않기 때문에 실제로 여러분이 보고 있는 거의 모든 데이터셋은 다른 기술보다 훨씬 잘 작동하는 기술이 있습니다.  오늘날, 어떤 기술이 많은 시간 동안 효과가 있는지 연구하는 경험적 연구자들이 있습니다. 결정트리의 앙상블, 즉 무작위로 포레스트를 만드는 것은 아마도 가장 자주 맨 위에 있는 기술일 것입니다.
 Fast.ai는 적절하게 전처리 하고 매개 변수를 설정하는 표준 방법을 제공합니다.<br>
 
-***
 ## Scikit-learn[[42:54]](https://www.youtube.com/watch?v=CzdWqFTmn0Y&t=2574s)
 파이썬에서 가장 인기있고 중요한 기계학습 패키지이다.
 그것은 모든부분에서 가장 좋지는 않다.(예를 들면 XGBoost가 Gradient Boosting Tree보다 좋다) 하지만 거의 모든 부분에서 꽤 좋다.<br>
@@ -197,3 +150,150 @@ add_datepart(df_raw, 'saledate')
 df_raw.saleYear.head()
 ```
 
+**질문**:[55:40] https://youtu.be/CzdWqFTmn0Y?t=55m40s 'df['saleYear']' and 'df.saleYear'의 차이점은 무엇일까요? 그것은 특히 값을 할당할 때 대괄호를 사용하는 것이 안전하며 열이 이미 존재하지 않을 가능성이 있습니다.
+
+'add_datepart'를 실행한 후 많은 숫자 열을 추가하고 'saledate' 열을 제거했습니다. 문자열 값이 포함된 다른 열이 있기 때문에 앞에서 본 오류를 전달하기에는 충분하지 않습니다. Pandas는 범주 데이터 유형의 개념을 가지고 있지만 기본적으로 어떤 것도 범주로 만들지 않습니다. Fast.ai는 'train_cats'라는 함수를 제공하여 문자열인 모든 항목에 대한 범주형 변수를 생성합니다. 그것은 정수인 열을 만들고 정수에서 문자열로의 매핑을 저장할 것입니다. 'train_cats'는 훈련 데이터에 특화되어 있기 때문에 "train"이라고 불립니다. 유효성 검사 및 테스트 세트가 동일한 범주 매핑을 사용하는 것이 중요합니다(즉, 훈련 데이터 셋에 대해 "High"에 대해 1을 사용한 경우 1도 유효성 검사 및 테스트 데이터 세트에 "High"에 대해 사용해야 합니다). 검증 및 테스트 데이터 세트의 경우 'apply_cats'를 대신 사용합니다.
+
+```
+train_cats(df_raw)
+df_raw.UsageBand.cat.categories
+Index(['High', 'Low', 'Medium'], dtype='object)
+```
+
+* 'df_raw.UsageBand.cat' — 'fld.dt.year'와 유사하게 '.cat'은 어떤 것이 범주라고 가정할 때 어떤 것에 대한 액세스를 제공합니다.
+
+순서는 크게 중요하지 않지만, 한 지점에서 분할하는 의사 결정 트리를 만들 것이기 때문에(예: 'High' vs. 'Low' a와 'Medium' , 'High' 와 'Low' vs. 'Medium') 약간 이상하죠. 
+적절한 방법으로 정렬하려면 다음을 수행합니다.
+
+```
+df_raw.UsageBand.cat.set_categories(['High', 'Medium', 'Low'],
+    ordered=True, inplace=True)
+```
+
+* 'inplace'는 새로운 데이터 프레임을 반환하기 보다는 기존의 데이터 프레임을 바꾸라고 Pandas에게 요청할 것입니다.
+
+"ordinal"이라고 불리는 범주형 변수가 있습니다. 순서형 범주형 변수는 일종의 순서(예: "낮음" < "중간" < "높음")를 가집니다. 
+랜덤 포레스트는 그런 사실에는 그다지 민감하지 않지만, 주목할 필요가 있습니다.
+
+
+```
+display_all(df_raw.isnull().sum().sort_index()/len(df_raw))
+```
+
+위에서 각 열에 대해 빈 값을 추가하고 인덱스(판다)별로 정렬하고 여러 데이터 집합으로 나눕니다.
+
+CSV를 읽는 데는 약 10초가 걸렸고 처리에는 10초가 더 걸렸으므로 다시 기다리지 않으려면 CSV를 저장하는 것이 좋습니다. 
+깃털 형식으로 저장하겠습니다. 이렇게 하면 RAM과 동일한 기본 형식으로 디스크에 저장할 수 있습니다. 이것은 어떤 것을 저장하고 또한 그것을 다시 읽는 가장 빠른 방법입니다. 
+깃털 형식은 판다스뿐만 아니라 자바, 아파치 스파크 등에서도 표준이 되고 있다.
+
+```
+os.makedirs('tmp', exist_ok=True)
+df_raw.to_feather('tmp/bulldozers-raw')
+```
+
+이렇게 다시 읽을 수 있습니다:
+
+```
+df_raw = pd.read_feather('tmp/raw')
+```
+
+범주는 숫자 코드로 대체하고 연속형 결측값을 처리하며 종속 변수를 별도의 변수로 나눕니다.
+
+
+```
+df, y, nas = proc_df(df_raw, 'SalePrice')
+```
+
+![image](https://user-images.githubusercontent.com/76080523/142410424-eb10054f-1022-4682-babb-21b2f4e5c57d.png)
+
+
+* 'df' — 데이터 프레임
+* 'y_fld' — 종속 변수 이름
+* 데이터 프레임의 복사본을 만들고 종속 변수 값('y_fld')을 잡은 다음 데이터 프레임에서 종속 변수를 삭제합니다.
+* 그러면 'fix_missing'이 될 것입니다(아래 참조).
+* 그런 다음 데이터 프레임을 살펴보고 'numericalize'를 호출합니다(아래 참조).
+* 'dummies' — 가능한 값이 적은 열이 있으므로 숫자를 지정하는 대신 더미에 넣을 수 있습니다. 하지만 지금으로서는 그렇게 하지 않을 것입니다.
+
+## fix_missing
+
+![image](https://user-images.githubusercontent.com/76080523/142410681-fe88d404-7c09-4b64-8122-782565a824c9.png)
+
+
+* 숫자 데이터 유형의 경우 먼저 null 열이 있는지 확인합니다.
+이 경우 끝에 '_na'가 추가된 이름으로 새 열을 만들고 누락된 경우 1로, 없는 경우 0으로 설정합니다. 그런 다음 결측값을 중위수로 바꿉니다.
+
+* 판다는 범주형 변수를 '-1'로 설정하여 자동으로 처리하기 때문에 우리는 범주형 변수에 대해 이렇게 할 필요가 없습니다.
+
+## numericalize
+
+![image](https://user-images.githubusercontent.com/76080523/142410801-384d12b3-923d-491f-9852-36dade996894.png)
+
+
+* 숫자가 아닌 범주형 유형인 경우 해당 열을 코드 + 1로 바꿉니다. 기본적으로 판다스는 누락시 '-1'을 사용하므로 현재 누락 시 ID는 '0'입니다.
+
+```
+df.head()
+```
+
+![image](https://user-images.githubusercontent.com/76080523/142410947-cae26e71-422d-4fbb-8c61-cbfabfb2cd5b.png)
+
+
+이제 모든 숫자들을 가지고 있습니다. 불은 숫자로 처리된다는 점에 유의하십시오. 그래서 랜덤 포레스트를 만들 수 있습니다.
+
+```
+m = RandomForestRegressor(n_jobs=-1)
+m.fit(df, y)
+m.score(df,y)
+```
+
+랜덤 포레스트는 세 개 이상의 병렬이 가능합니다. 즉, CPU가 두 개 이상인 경우 데이터를 여러 CPU로 분할하여 선형적으로 확장할 수 있습니다. 
+따라서 CPU가 많을수록 소요 시간을 해당 숫자로 나눕니다(정확히는 아니지만 대략). 'n_jobs=-1'은 랜덤 포리스트 회귀 분석기에 사용자가 가지고 있는 
+각 CPU에 대해 별도의 작업/프로세스를 생성하도록 지시합니다.
+
+'m.score'는 r² 값(1은 양호, 0은 나쁨)을 반환합니다. 
+
+
+와, r² 0.98이군요. 대단하죠? 아마, 아닐 수도 있습니다.
+
+머신 러닝에서 가장 중요한 아이디어는 별도의 훈련 및 검증 데이터 세트를 갖는 것입니다. 
+동기 부여로 데이터를 분할하지 않고 데이터를 모두 사용한다고 가정해 보십시오. 모수가 많다고 가정해 봅시다:
+
+![image](https://user-images.githubusercontent.com/76080523/142411115-162d5893-0cfd-475e-99a6-8eaf1e6e4154.png)
+
+
+그림 데이터 점의 오류는 오른쪽 끝에 있는 모델에서 가장 낮지만(파란색 곡선이 빨간색 점을 거의 완벽하게 통과함) 최선의 선택은 아닙니다.
+왜 그런 것일까요? 일부 새로운 데이터 점을 수집하는 경우 오른쪽 그래프에서 해당 곡선에 있지 않을 가능성이 높지만 중간 그래프의 곡선에 더 가깝습니다.
+
+```
+def split_vals(a,n): return a[:n].copy(), a[n:].copy()
+n_valid = 12000  # same as Kaggle's test set size
+n_trn = len(df)-n_valid
+raw_train, raw_valid = split_vals(df_raw, n_trn)
+X_train, X_valid = split_vals(df, n_trn)
+y_train, y_valid = split_vals(y, n_trn)
+X_train.shape, y_train.shape, X_valid.shape
+((389125, 66), (389125,), (12000, 66))
+```
+
+## 기본 모델
+
+유효성 검사 세트를 사용하면 유효성 검사 세트의 경우 r²가 0.88임을 알 수 있습니다.
+
+```
+def rmse(x,y): return math.sqrt(((x-y)**2).mean())
+def print_score(m):
+    res = [rmse(m.predict(X_train), y_train),
+           rmse(m.predict(X_valid), y_valid),
+           m.score(X_train, y_train), m.score(X_valid, y_valid)]
+    if hasattr(m, 'oob_score_'): res.append(m.oob_score_)
+    print(res)
+m = RandomForestRegressor(n_jobs=-1)
+%time m.fit(X_train, y_train)
+print_score(m)
+CPU times: user 1min 3s, sys: 356 ms, total: 1min 3s
+Wall time: 8.46 s
+[0.09044244804386327, 0.2508166961122146, 0.98290459302099709, 0.88765316048270615]
+```
+
+*[훈련rmse, 검증rmse, 훈련세트 r², 검증세트 r²]
+캐글대회의 공개이사회를 보면 0.25의 RMSE가 상위 25% 안팎으로 떨어집니다. 랜덤 포레스트는 매우 강력하며, 이 완전히 표준화된 프로세스는 모든 데이터셋에 매우 유용합니다.
