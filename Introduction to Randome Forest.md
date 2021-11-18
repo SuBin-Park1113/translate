@@ -1,6 +1,6 @@
 # 랜덤포레스트
 ***
-## 불도저를 위한 지침서
+## 랜덤포레스트 : 중고 불도저 가격표
 ``` 
 %load_ext autoreload<br>
 %autoreload 2<br>
